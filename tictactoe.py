@@ -4,6 +4,7 @@ Tic Tac Toe Player
 
 import math
 import copy
+import numpy as np
 
 X = "X"
 O = "O"
@@ -53,46 +54,45 @@ def result(board, action):
     Returns the board that results from making move (i, j) on the board.
     """
     new_board = copy.deepcopy(board)
-    # if new_board[action[0]][action[1]] != EMPTY:
-    #     raise NameError("Action is invalide")
+    if new_board[action[0]][action[1]] != EMPTY:
+        raise NameError("Action is invalide")
     if player(board) == X:
         new_board[action[0]][action[1]] = X
     else:
         new_board[action[0]][action[1]] = O
-
-    print("old:", board)
-    print("new", new_board)
     return new_board
 
+
+def row_and_col_check(np_board, player):
+    win_state = np.array([player, player, player])
+    if (np_board[0, :] == win_state).all() or \
+       (np_board[1, :] == win_state).all() or \
+       (np_board[2, :] == win_state).all() or \
+       (np_board[:, 0] == win_state).all() or \
+       (np_board[:, 1] == win_state).all() or \
+       (np_board[:, 2] == win_state).all():
+        return player
+    return None
+
+
+def diag_check(np_board, player):
+    if np_board[0][0] == np_board[1][1] == np_board[2][2] == player or \
+       np_board[2][0] == np_board[1][1] == np_board[0][2] == player:
+        return player
+    return None
 
 
 def winner(board):
     """
     Returns the winner of the game, if there is one.
     """
+    np_board = np.array(board)
 
-    if board[0][:3] == [X, X, X] or \
-       board[1][0:3] == [X, X, X] or \
-       board[2][0:3] == [X, X, X] or \
-       board[0:3][0] == [X, X, X] or \
-       board[0:3][1] == [X, X, X] or \
-       board[0:3][2] == [X, X, X]:
+    if row_and_col_check(np_board, X) != None or \
+        diag_check(np_board, X) != None:
         return X
-    
-    if board[0][0:3] == [O, O, O] or \
-       board[1][0:3] == [O, O, O] or \
-       board[2][0:3] == [O, O, O] or \
-       board[0:3][0] == [O, O, O] or \
-       board[0:3][1] == [O, O, O] or \
-       board[0:3][2] == [O, O, O]:
-        return O
-    
-    if board[0][0] == board[1][1] == board[2][2] == X or \
-       board[2][0] == board[1][1] == board[0][2] == X:
-        return X
-    
-    if board[0][0] == board[1][1] == board[2][2] == O or \
-       board[2][0] == board[1][1] == board[0][2] == O:
+    if row_and_col_check(np_board, O) != None or \
+        diag_check(np_board, O) != None:
         return O
     
     return None
@@ -123,38 +123,32 @@ def utility(board):
     return 0
 
 def minimax_helper(board):
+    """
+    returns [best_score, optimal_action]
+    """
     if terminal(board) == True:
-        return utility(board)
+        return [utility(board), (-1, -1)]
     
     p = player(board)
-
     moves = actions(board)
-
-    move_min = {-1, -1}
-    move_zero = {-1, -1}
-    move_max = {-1, -1}
+    best_move = (-1, -1)
+    maximum = -2
+    minimum = 2
 
     for move in moves:
-
-        if minimax_helper(result(board, move)) == 1:
-            move_max = move
-        if minimax_helper(result(board, move)) == 0:
-            move_zero = move
-        if minimax_helper(result(board, move)) == -1:
-            move_min = move    
-
+        new_board = result(board, move)
+        if p == X:
+            if minimax_helper(new_board)[0] > maximum:
+                maximum = minimax_helper(new_board)[0]
+                best_move = move
+        else:
+            if minimax_helper(new_board)[0] < minimum:
+                minimum = minimax_helper(new_board)[0]
+                best_move = move
+    
     if p == X:
-        if move_max != {-1, -1}:
-            return move_max
-        if move_zero != {-1, -1}:
-            return move_zero
-        return move_min
-    else:
-        if move_min != {-1, -1}:
-            return move_min
-        if move_zero != {-1, -1}:
-            return move_zero
-        return move_max
+        return [maximum, best_move]
+    return [minimum, best_move]
 
 def minimax(board):
     """
@@ -162,6 +156,6 @@ def minimax(board):
     """
     if terminal(board) == True:
         return None
-    return minimax_helper(board)
+    return minimax_helper(board)[1]
     
 

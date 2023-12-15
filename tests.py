@@ -15,8 +15,8 @@ board3 = [["X", "O", EMPTY],
             [EMPTY, EMPTY, EMPTY]]
 
 board4 = [["X", "O", "X"],
-            ["O", "O", "X"],
-            [EMPTY, "X", EMPTY]]
+            [EMPTY, EMPTY, EMPTY],
+            [EMPTY, EMPTY, EMPTY]]
 
 board5 = [["X", "O", "X"],
             ["X", "O", "X"],
@@ -30,8 +30,8 @@ board7 = [["O", "X", "O"],
             ["X", "O", "X"],
             ["X", "X", "O"]]
 
-board8 = [["X", "O", "O"],
-            ["X", "O", "X"],
+board8 = [["X", "O", "X"],
+            ["O", "O", "X"],
             ["O", "X", "X"]]
 
 board9 = [["X", "O", "X"],
@@ -87,9 +87,9 @@ def test_utility():
     print(ttt.utility(board9))
 
 def test_minimax():
-    # print(ttt.minimax(board1))
-    # print(ttt.minimax(board2))
-    # print(ttt.minimax(board3))
+    print(ttt.minimax(board1))
+    print(ttt.minimax(board2))
+    print(ttt.minimax(board3))
     print(ttt.minimax(board4))
     print(ttt.minimax(board5))
     print(ttt.minimax(board6))
@@ -98,10 +98,10 @@ def test_minimax():
     print(ttt.minimax(board9))
 
 
-# test_player()
-# test_actions()
-# test_result()
-# test_winner()
-# test_terminal()
-# test_utility()
+test_player()
+test_actions()
+test_result()
+test_winner()
+test_terminal()
+test_utility()
 test_minimax()
